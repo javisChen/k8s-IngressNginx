@@ -49,6 +49,39 @@ spec:
           ports:
             - containerPort: 80
       restartPolicy: Always
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dep-nginx-2
+  labels:
+    app: dep-nginx-2
+spec:
+  selector:
+    matchLabels:
+      app: dep-nginx-2
+  replicas: 1
+  template:
+    metadata:
+      name: dep-nginx-2
+      labels:
+        app: dep-nginx-2
+    spec:
+      containers:
+        - name: dep-nginx-2
+          image: nginx
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
+          lifecycle:
+            postStart:
+              exec:
+                command:
+                  - /bin/sh
+                  - -c
+                  - 'echo hello > /usr/share/nginx/html/index.html'
+      restartPolicy: Always
 
 ---
 apiVersion: v1
@@ -62,8 +95,23 @@ spec:
     - port: 80
       targetPort: 80
       protocol: TCP
-  clusterIP: None
+  type: NodePort
 ---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc-nginx-2
+spec:
+  selector:
+    app: dep-nginx-2
+  ports:
+    - port: 80
+      targetPort: 80
+      protocol: TCP
+  type: NodePort
+---
+
 apiVersion: v1
 kind: Service
 metadata:
@@ -75,4 +123,4 @@ spec:
     - port: 8080
       targetPort: 8080
       protocol: TCP
-  clusterIP: None
+  type: NodePort

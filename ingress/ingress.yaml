@@ -15,6 +15,16 @@ spec:
                   number: 80
             path: /
             pathType: Prefix
+    - host: nginx2.ingress.com
+      http:
+        paths:
+          - backend:
+              service:
+                name: svc-nginx-2
+                port:
+                  number: 80
+            path: /
+            pathType: Prefix
     - host: tomcat.ingress.com
       http:
         paths:
@@ -23,5 +33,15 @@ spec:
                 name: svc-tomcat
                 port:
                   number: 8080
-            path: /tomcat
+            path: /
+            pathType: Prefix
+    - host: iam.ingress.com
+      http:
+        paths:
+          - backend:
+              service:
+                name: svc-ark-center-iam
+                port:
+                  number: 8080
+            path: /
             pathType: Prefix
