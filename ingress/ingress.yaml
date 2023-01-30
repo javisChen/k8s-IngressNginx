@@ -1,0 +1,27 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: demo-ingress
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: nginx.ingress.com
+      http:
+        paths:
+          - backend:
+              service:
+                name: svc-nginx
+                port:
+                  number: 80
+            path: /
+            pathType: Prefix
+    - host: tomcat.ingress.com
+      http:
+        paths:
+          - backend:
+              service:
+                name: svc-tomcat
+                port:
+                  number: 8080
+            path: /tomcat
+            pathType: Prefix

@@ -1,0 +1,78 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dep-tomcat
+  labels:
+    app: dep-tomcat
+spec:
+  selector:
+    matchLabels:
+      app: dep-tomcat
+  replicas: 1
+  template:
+    metadata:
+      name: dep-tomcat
+      labels:
+        app: dep-tomcat
+    spec:
+      containers:
+        - name: dep-tomcat
+          image: tomcat
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+      restartPolicy: Always
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dep-nginx
+  labels:
+    app: dep-nginx
+spec:
+  selector:
+    matchLabels:
+      app: dep-nginx
+  replicas: 1
+  template:
+    metadata:
+      name: dep-nginx
+      labels:
+        app: dep-nginx
+    spec:
+      containers:
+        - name: dep-nginx
+          image: nginx
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
+      restartPolicy: Always
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc-nginx
+spec:
+  selector:
+    app: dep-nginx
+  ports:
+    - port: 80
+      targetPort: 80
+      protocol: TCP
+  clusterIP: None
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc-tomcat
+spec:
+  selector:
+    app: dep-tomcat
+  ports:
+    - port: 8080
+      targetPort: 8080
+      protocol: TCP
+  clusterIP: None
